@@ -1,0 +1,17 @@
+{
+  "name": "mecaopen-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OBD2 Libre - API de códigos de falla",
+  "scripts": {
+    "import": "node scripts/import-codes.js",
+    "validate": "node scripts/validate.js",
+    "dev": "node api/server.js",
+    "start": "node api/server.js"
+  },
+  "dependencies": {
+    "sql.js": "^1.13.0",
+    "express": "^4.21.2",
+    "cors": "^2.8.5"
+  }
+}

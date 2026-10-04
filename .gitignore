@@ -1,0 +1,22 @@
+# Dependencias
+node_modules/
+
+# Build
+dist/
+/.angular/cache
+
+# Entorno
+.env
+*.env
+
+# DB local (opcional, según preferir quien clona el repo)
+# backend/data/mecaopen.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# SO
+.DS_Store
+Thumbs.db

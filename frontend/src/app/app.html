@@ -1,0 +1,44 @@
+<div class="min-h-screen flex flex-col bg-gray-50 relative">
+  <!-- Watermark -->
+  <div class="absolute inset-0 bg-center bg-contain bg-no-repeat opacity-20 pointer-events-none"
+       style="background-image: url('/logo-obd2libre-claro.png'); z-index: 0;"></div>
+  
+  <!-- Header -->
+  <header class="bg-primary text-white shadow-lg relative z-10">
+    <div class="max-w-4xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a routerLink="/" class="flex items-center gap-2 hover:opacity-90">
+          <img src="/icon-512.png" alt="OBD2 Libre" class="h-8 w-8">
+          <span class="text-xl font-bold">OBD2 Libre</span>
+        </a>
+        <nav class="flex gap-4 text-sm">
+          <a routerLink="/codigos" class="hover:underline">Códigos</a>
+          <a routerLink="/buscar" class="hover:underline">Buscar</a>
+          <a routerLink="/acerca-de" class="hover:underline">Acerca de</a>
+          <a routerLink="/contribuir" class="hover:underline">Contribuir</a>
+          <a routerLink="/sugerencias" class="hover:underline">Sugerencias</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="flex-1">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-gray-300 py-6 mt-12">
+    <div class="max-w-4xl mx-auto px-4 text-center text-sm">
+      <p class="mb-2">
+        ⚠️ La información es orientativa y no reemplaza un diagnóstico profesional.
+      </p>
+      <p class="mb-2">
+        <a routerLink="/creditos" class="hover:underline">Créditos y licencias</a>
+      </p>
+      <p class="text-gray-500">
+        Hecho con ❤️ para la comunidad automotriz colombiana
+      </p>
+    </div>
+  </footer>
+</div>

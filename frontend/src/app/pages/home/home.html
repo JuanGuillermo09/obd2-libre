@@ -1,0 +1,64 @@
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <!-- Hero -->
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-bold text-gray-900 mb-4">
+      ¿Qué significa tu código de falla?
+    </h1>
+    <p class="text-xl text-gray-600 mb-8">
+      Escribe el código que salió en tu escáner (ej: P0300) y te explicamos
+      qué le pasa a tu carro en español claro.
+    </p>
+
+    <!-- Buscador principal -->
+    <div class="max-w-md mx-auto">
+      <form (ngSubmit)="buscar()" class="flex gap-2">
+        <input
+          type="text"
+          [(ngModel)]="codigo"
+          name="codigo"
+          placeholder="Ej: P0300"
+          class="flex-1 px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none uppercase"
+          maxlength="5"
+        >
+        <button
+          type="submit"
+          class="px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark transition"
+        >
+          Buscar
+        </button>
+      </form>
+      <p class="text-sm text-gray-500 mt-2">
+        Sin registro, sin costo, sin complicaciones.
+      </p>
+    </div>
+  </div>
+
+  <!-- Códigos comunes -->
+  <div class="mb-12">
+    <h2 class="text-2xl font-bold mb-4">Códigos más comunes</h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+      @for (codigo of codigosComunes; track codigo) {
+        <a
+          [routerLink]="['/codigo', codigo]"
+          class="p-4 bg-white border border-gray-200 rounded-lg hover:border-primary hover:shadow-md transition text-center"
+        >
+          <div class="text-lg font-mono font-bold text-primary">{{ codigo }}</div>
+          <div class="text-sm text-gray-600 mt-1">{{ getDescripcionCorta(codigo) }}</div>
+        </a>
+      }
+    </div>
+  </div>
+
+  <!-- Info del proyecto -->
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+    <h2 class="text-xl font-bold mb-2">¿Qué es OBD2 Libre?</h2>
+    <p class="text-gray-700 mb-4">
+      Un proyecto gratuito que explica los códigos de falla de tu carro en español,
+      sin tecnicismos y sin costo. Pensado para mecánicos, estudiantes y cualquier
+      persona que quiera entender qué le pasa a su vehículo.
+    </p>
+    <a routerLink="/acerca-de" class="text-primary font-semibold hover:underline">
+      Conoce más →
+    </a>
+  </div>
+</div>

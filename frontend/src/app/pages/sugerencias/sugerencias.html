@@ -1,0 +1,118 @@
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-6">Sugerencias de la comunidad</h1>
+
+  <!-- Login de administrador -->
+  <div class="bg-white border border-gray-200 rounded-lg p-4 mb-6" *ngIf="!loggedIn">
+    <h2 class="text-xl font-bold mb-3">Acceso de administrador</h2>
+    <div class="flex flex-col gap-3 max-w-sm">
+      <input type="email" [(ngModel)]="adminEmail" placeholder="Email (soporte@obd2libre.com)"
+             class="px-4 py-2 border border-gray-300 rounded-lg">
+      <input type="password" [(ngModel)]="adminPassword" placeholder="Contraseña (admin123)"
+             class="px-4 py-2 border border-gray-300 rounded-lg">
+      <button (click)="login()" class="px-4 py-2 bg-primary text-white rounded-lg">Ingresar</button>
+    </div>
+    <p class="text-xs text-gray-400 mt-2">Demo: soporte@obd2libre.com / admin123</p>
+  </div>
+
+  <!-- Logout -->
+  <div class="mb-6 text-right" *ngIf="loggedIn">
+    <button (click)="logout()" class="text-sm text-red-600 hover:underline">Cerrar sesión</button>
+  </div>
+
+  <!-- Filtro por estado -->
+  <div class="mb-6">
+    <label class="block text-sm font-semibold mb-2">Filtrar por estado</label>
+    <select [(ngModel)]="filtroEstado" (change)="cambiarFiltro()" class="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg">
+      <option value="">Todas</option>
+      <option value="pendiente">Pendientes</option>
+      <option value="en_desarrollo">En desarrollo</option>
+      <option value="terminada">Terminadas</option>
+      <option value="rechazada">Rechazadas</option>
+    </select>
+  </div>
+
+  <div *ngIf="!cargando && sugerencias.length === 0" class="text-center py-8">
+    <p class="text-gray-600">No hay sugerencias todavía.</p>
+  </div>
+
+  <div *ngIf="!cargando && sugerencias.length > 0">
+    <div class="space-y-4">
+      <div *ngFor="let s of paginaSugerencias" class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="flex items-start justify-between mb-2">
+          <div>
+            <span class="font-mono font-bold text-primary">{{ s.codigo }}</span>
+            <span class="text-gray-500 mx-2">•</span>
+            <span class="text-sm text-gray-600 capitalize">{{ s.tipo }}</span>
+          </div>
+          <span class="px-2 py-0.5 rounded text-xs font-semibold"
+                [class]="{
+                  'bg-yellow-100 text-yellow-800': s.estado === 'pendiente',
+                  'bg-blue-100 text-blue-800': s.estado === 'en_desarrollo',
+                  'bg-green-100 text-green-800': s.estado === 'terminada',
+                  'bg-red-100 text-red-800': s.estado === 'rechazada'
+                }">
+            {{ s.estado }}
+          </span>
+        </div>
+        <p class="text-gray-700 whitespace-pre-line">{{ s.contenido }}</p>
+
+        <!-- Respuesta del administrador (solo visible si existe) -->
+        <div *ngIf="s.respuesta" class="mt-3 p-3 bg-green-50 rounded border border-green-200">
+          <p class="text-sm font-semibold text-green-800">✅ Respuesta:</p>
+          <p class="text-sm text-gray-700 mt-1">{{ s.respuesta }}</p>
+        </div>
+
+        <!-- Controles de administrador -->
+        <div *ngIf="loggedIn" class="mt-4 pt-4 border-t border-gray-200">
+          <div class="flex flex-col gap-3">
+            <div class="flex gap-3 items-center">
+              <label class="text-sm font-semibold">Cambiar estado:</label>
+              <select [(ngModel)]="s.estado" (change)="cambiarEstado(s.id, s.estado)"
+                      class="px-2 py-1 border border-gray-300 rounded text-sm">
+                <option value="pendiente">Pendiente</option>
+                <option value="en_desarrollo">En desarrollo</option>
+                <option value="terminada">Terminada</option>
+                <option value="rechazada">Rechazada</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-1">Responder:</label>
+              <textarea #respuestaInput [(ngModel)]="s.respuesta" rows="2"
+                        placeholder="Escribe tu respuesta..."
+                        class="w-full px-3 py-2 border border-gray-300 rounded text-sm"></textarea>
+              <button (click)="responder(s.id, s.respuesta)"
+                      class="mt-2 px-3 py-1 bg-primary text-white text-sm rounded">
+                Guardar respuesta
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-2 text-sm text-gray-400 flex items-center gap-4">
+          <span *ngIf="s.contacto">📧 {{ s.contacto }}</span>
+          <span>🕐 {{ s.fecha_creacion }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <div *ngIf="totalPaginas > 1" class="flex justify-center gap-1 mt-6 flex-wrap">
+      <button *ngIf="paginaActual > 1"
+              (click)="irAPagina(paginaActual - 1)"
+              class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">
+        ← Anterior
+      </button>
+      <button *ngFor="let pagina of getPaginas()"
+              (click)="irAPagina(pagina)"
+              [class]="pagina === paginaActual ? 'px-2 py-1 bg-primary text-white rounded text-sm' : 'px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100'">
+        {{ pagina }}
+      </button>
+      <button *ngIf="paginaActual < totalPaginas"
+              (click)="irAPagina(paginaActual + 1)"
+              class="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">
+        Siguiente →
+      </button>
+    </div>
+  </div>
+</div>

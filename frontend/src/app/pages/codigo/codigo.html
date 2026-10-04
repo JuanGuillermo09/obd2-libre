@@ -1,0 +1,169 @@
+<div class="max-w-4xl mx-auto px-4 py-8">
+  @if (cargando) {
+    <div class="text-center py-12">
+      <div class="text-2xl">⏳</div>
+      <p class="text-gray-600 mt-2">Cargando ficha...</p>
+    </div>
+  } @else if (error) {
+    <div class="text-center py-12">
+      <div class="text-4xl mb-4">😕</div>
+      <h1 class="text-2xl font-bold text-gray-900 mb-2">Código no encontrado</h1>
+      <p class="text-gray-600 mb-6">{{ error }}</p>
+      <div class="space-x-4">
+        <a routerLink="/" class="text-primary hover:underline">← Volver al inicio</a>
+        <a routerLink="/contribuir" class="text-primary hover:underline">Sugerir este código</a>
+      </div>
+    </div>
+  } @else if (ficha) {
+    <!-- Header de la ficha -->
+    <div class="mb-8">
+      <a routerLink="/" class="text-primary hover:underline text-sm">← Volver</a>
+      <div class="mt-4 flex items-start justify-between">
+        <div>
+          <h1 class="text-3xl font-bold font-mono text-primary">{{ ficha.codigo }}</h1>
+          <p class="text-lg text-gray-700 mt-1">{{ ficha.nombre_es || ficha.nombre_tecnico }}</p>
+        </div>
+        <span
+          class="px-3 py-1 rounded-full text-sm font-semibold"
+          [class]="{
+            'bg-green-100 text-green-800': ficha.estado === 'revisado',
+            'bg-yellow-100 text-yellow-800': ficha.estado === 'borrador'
+          }"
+        >
+          {{ ficha.estado === 'revisado' ? '✓ Revisado' : '📝 Borrador' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Aviso de gravedad -->
+    @if (ficha.gravedad) {
+      <div
+        class="p-4 rounded-lg mb-6"
+        [class]="{
+          'bg-red-50 border border-red-200': ficha.gravedad === 'alta',
+          'bg-yellow-50 border border-yellow-200': ficha.gravedad === 'media',
+          'bg-green-50 border border-green-200': ficha.gravedad === 'baja'
+        }"
+      >
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">
+            {{ ficha.gravedad === 'alta' ? '🔴' : ficha.gravedad === 'media' ? '🟡' : '🟢' }}
+          </span>
+          <div>
+            <p class="font-semibold">
+              Gravedad: {{ ficha.gravedad | titlecase }}
+            </p>
+            @if (ficha.se_puede_manejar) {
+              <p class="text-sm text-gray-700">
+                @switch (ficha.se_puede_manejar) {
+                  @case ('sí') { ✅ Se puede seguir manejando }
+                  @case ('con precaución') { ⚠️ Se puede manejar con precaución }
+                  @case ('no') { 🛑 No se recomienda seguir manejando }
+                }
+              </p>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Explicación en cristiano -->
+    @if (ficha.explicacion) {
+      <section class="mb-8">
+        <h2 class="text-xl font-bold mb-3">¿Qué significa?</h2>
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+          <p class="text-gray-800 leading-relaxed whitespace-pre-line">{{ ficha.explicacion }}</p>
+        </div>
+      </section>
+    }
+
+    <!-- Síntomas -->
+    @if (ficha.sintomas && ficha.sintomas.length > 0) {
+      <section class="mb-8">
+        <h2 class="text-xl font-bold mb-3">Síntomas que puedes notar</h2>
+        <ul class="space-y-2">
+          @for (sintoma of getSintomas(); track sintoma) {
+            <li class="flex items-start gap-2">
+              <span class="text-primary mt-1">•</span>
+              <span class="text-gray-700">{{ sintoma }}</span>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <!-- Causas -->
+    @if (ficha.causas && ficha.causas.length > 0) {
+      <section class="mb-8">
+        <h2 class="text-xl font-bold mb-3">Causas probables</h2>
+        <p class="text-sm text-gray-500 mb-3">Ordenadas de la más común a la menos común</p>
+        <ol class="space-y-3">
+          @for (causa of getCausas(); track causa) {
+            <li class="flex items-start gap-3">
+              <span class="flex-shrink-0 w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold">
+                {{ $index + 1 }}
+              </span>
+              <span class="text-gray-700">{{ causa }}</span>
+            </li>
+          }
+        </ol>
+      </section>
+    }
+
+    <!-- Pasos de diagnóstico -->
+    @if (ficha.pasos_diagnostico && ficha.pasos_diagnostico.length > 0) {
+      <section class="mb-8">
+        <h2 class="text-xl font-bold mb-3">Pasos para diagnosticar</h2>
+        <ol class="space-y-3">
+          @for (paso of getPasos(); track paso) {
+            <li class="flex items-start gap-3">
+              <span class="flex-shrink-0 w-6 h-6 bg-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                {{ $index + 1 }}
+              </span>
+              <span class="text-gray-700">{{ paso }}</span>
+            </li>
+          }
+        </ol>
+      </section>
+    }
+
+    <!-- Aviso legal -->
+    <div class="bg-gray-100 border border-gray-300 rounded-lg p-4 mt-8">
+      <p class="text-sm text-gray-600">
+        ⚠️ <strong>Aviso:</strong> Esta información es orientativa y no reemplaza un diagnóstico
+        profesional. Si la falla afecta frenos, dirección o seguridad, lleva tu carro a un taller.
+      </p>
+    </div>
+
+    <!-- Fuente -->
+    @if (ficha.fuente_base) {
+      <p class="text-xs text-gray-400 mt-4">
+        Fuente de datos: {{ ficha.fuente_base }}
+      </p>
+    }
+
+    <!-- Resultados de Google -->
+    <section class="mt-8">
+      <h2 class="text-xl font-bold mb-3">¿Qué más dice Google?</h2>
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        @if (googleCargando) {
+          <p class="text-gray-600">Buscando en Google...</p>
+        } @else if (googleResults.length > 0) {
+          <div class="space-y-4">
+            @for (item of googleResults; track item.link) {
+              <div>
+                <a [href]="item.link" target="_blank" rel="noopener" class="text-primary hover:underline font-semibold">
+                  {{ item.title }}
+                </a>
+                <p class="text-sm text-gray-600 mt-1">{{ item.snippet }}</p>
+                <p class="text-xs text-green-700">{{ item.displayLink }}</p>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="text-gray-600">No se encontraron resultados en Google para este código.</p>
+        }
+      </div>
+    </section>
+  }
+</div>

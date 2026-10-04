@@ -1,0 +1,94 @@
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <a routerLink="/" class="text-primary hover:underline text-sm">← Volver</a>
+
+  <h1 class="text-3xl font-bold mt-4 mb-6">Contribuir</h1>
+
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+    <h2 class="text-xl font-bold mb-2">¡Tu ayuda vale mucho!</h2>
+    <p class="text-gray-700">
+      No necesitas saber programar. Con que nos cuentes qué está mal en una ficha
+      o qué fallas has visto en tu carro, ya estás ayudando.
+    </p>
+  </div>
+
+  @if (enviado) {
+    <div class="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
+      <div class="text-4xl mb-2">✅</div>
+      <h2 class="text-xl font-bold text-green-800 mb-2">¡Gracias por tu aporte!</h2>
+      <p class="text-green-700">
+        Tu sugerencia fue enviada. La revisaremos antes de publicarla.
+      </p>
+    </div>
+  } @else {
+    <form (ngSubmit)="enviar()" class="space-y-6">
+      <div>
+        <label class="block font-semibold mb-2">Código DTC *</label>
+        <input
+          type="text"
+          [(ngModel)]="codigo"
+          name="codigo"
+          required
+          placeholder="Ej: P0300"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:outline-none uppercase"
+          maxlength="5"
+        >
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-2">Tipo de aporte *</label>
+        <select
+          [(ngModel)]="tipo"
+          name="tipo"
+          required
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:outline-none"
+        >
+          <option value="correccion">Corrección de una ficha</option>
+          <option value="nuevo_codigo">Sugerir código faltante</option>
+          <option value="info_marca">Información de fallas por marca</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-2">Tu mensaje *</label>
+        <textarea
+          [(ngModel)]="contenido"
+          name="contenido"
+          required
+          rows="5"
+          placeholder="Cuéntanos qué está mal, qué falta o qué experiencia tienes con este código..."
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:outline-none"
+        ></textarea>
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-2">Tu contacto (opcional)</label>
+        <input
+          type="text"
+          [(ngModel)]="contacto"
+          name="contacto"
+          placeholder="Correo o red social (opcional)"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary focus:outline-none"
+        >
+        <p class="text-sm text-gray-500 mt-1">
+          Si quieres que te avisemos cuando se publique tu aporte.
+        </p>
+      </div>
+
+      <button
+        type="submit"
+        class="w-full py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark transition"
+      >
+        Enviar aporte
+      </button>
+    </form>
+  }
+
+  <div class="mt-8 text-center">
+    <p class="text-gray-600">
+      ¿Prefieres contribuir con código?
+      <a href="https://github.com" target="_blank" rel="noopener" class="text-primary hover:underline">
+        Visita nuestro repositorio
+      </a>
+    </p>
+  </div>
+</div>
