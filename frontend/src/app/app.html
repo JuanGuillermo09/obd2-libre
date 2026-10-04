@@ -11,12 +11,29 @@
           <img src="/icon-512.png" alt="OBD2 Libre" class="h-8 w-8">
           <span class="text-xl font-bold">OBD2 Libre</span>
         </a>
-        <nav class="flex gap-4 text-sm">
-          <a routerLink="/codigos" class="hover:underline">Códigos</a>
-          <a routerLink="/buscar" class="hover:underline">Buscar</a>
-          <a routerLink="/acerca-de" class="hover:underline">Acerca de</a>
-          <a routerLink="/contribuir" class="hover:underline">Contribuir</a>
-          <a routerLink="/sugerencias" class="hover:underline">Sugerencias</a>
+        <!-- Menú hamburguesa para móvil -->
+        <button class="md:hidden p-2" (click)="mobileMenuOpen = !mobileMenuOpen" aria-label="Menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+
+        <!-- Menú principal -->
+        <nav class="hidden md:flex gap-4 text-sm">
+          <a routerLink="/codigos" routerLinkActive="underline font-bold" class="hover:underline">Códigos</a>
+          <a routerLink="/buscar" routerLinkActive="underline font-bold" class="hover:underline">Buscar</a>
+          <a routerLink="/acerca-de" routerLinkActive="underline font-bold" class="hover:underline">Acerca de</a>
+          <a routerLink="/contribuir" routerLinkActive="underline font-bold" class="hover:underline">Contribuir</a>
+          <a routerLink="/sugerencias" routerLinkActive="underline font-bold" class="hover:underline">Sugerencias</a>
+        </nav>
+
+        <!-- Menú móvil -->
+        <nav [class.hidden]="!mobileMenuOpen" class="absolute top-full left-0 w-full bg-primary-dark p-4 flex flex-col gap-3 text-sm md:hidden z-20">
+          <a routerLink="/codigos" routerLinkActive="underline font-bold" (click)="mobileMenuOpen = false">Códigos</a>
+          <a routerLink="/buscar" routerLinkActive="underline font-bold" (click)="mobileMenuOpen = false">Buscar</a>
+          <a routerLink="/acerca-de" routerLinkActive="underline font-bold" (click)="mobileMenuOpen = false">Acerca de</a>
+          <a routerLink="/contribuir" routerLinkActive="underline font-bold" (click)="mobileMenuOpen = false">Contribuir</a>
+          <a routerLink="/sugerencias" routerLinkActive="underline font-bold" (click)="mobileMenuOpen = false">Sugerencias</a>
         </nav>
       </div>
     </div>
