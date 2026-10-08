@@ -25,7 +25,17 @@ function log(msg) {
 log('🧹 Limpiando backend/dist...');
 fs.rmSync(DESTINO, { recursive: true, force: true });
 
-// 2. Compilar el frontend
+// 2. Instalar dependencias del frontend
+// Necesario porque en despliegues con Root Directory=backend, Render solo
+// instala las del backend y el CLI de Angular (ng) no estaría disponible.
+log('📥 Instalando dependencias del frontend...');
+execSync('npm install', {
+  cwd: FRONTEND,
+  stdio: 'inherit',
+  shell: true,
+});
+
+// 3. Compilar el frontend
 log('🔨 Compilando el frontend...');
 execSync('npm run build -- --configuration production', {
   cwd: FRONTEND,
@@ -33,7 +43,7 @@ execSync('npm run build -- --configuration production', {
   shell: true,
 });
 
-// 3. Copiar el resultado a backend/dist/public
+// 4. Copiar el resultado a backend/dist/public
 if (!fs.existsSync(ORIGEN)) {
   console.error(`❌ No se encontró el build en: ${ORIGEN}`);
   process.exit(1);
@@ -42,7 +52,7 @@ if (!fs.existsSync(ORIGEN)) {
 log('📦 Copiando el build a backend/dist/public...');
 fs.cpSync(ORIGEN, DESTINO_FINAL, { recursive: true });
 
-// 4. Verificar que quedó lo esperado
+// 5. Verificar que quedó lo esperado
 const indexFinal = path.join(DESTINO_FINAL, 'index.html');
 if (fs.existsSync(indexFinal)) {
   log(`✅ Listo. El sitio se sirve desde: ${indexFinal}`);
