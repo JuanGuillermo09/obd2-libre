@@ -2,6 +2,8 @@
 
 Códigos de falla de carros explicados en español, sin tecnicismos y gratis.
 
+**Sitio en vivo:** https://obd2-libre.onrender.com
+
 > OBD2 Libre es un nombre provisional. Si ves otro en el repo, es que ya lo cambié.
 
 ## Por qué hago esto
@@ -87,17 +89,17 @@ node start.js
 
 ## Despliegue
 
-El backend también sirve el sitio, así que en producción corre **un solo servicio**.
+El proyecto está desplegado en **Render** como un único servicio web. El backend sirve
+la API y también el sitio compilado, así que todo vive en un solo dominio.
 
-### Build
+- **Servicio:** Web Service conectado al repositorio, rama `main`
+- **URL:** `https://obd2-libre.onrender.com` (mismo origen para el sitio y la API)
+- **Plan:** Free
 
-```bash
-cd backend
-npm run build     # Compila Angular y copia el sitio a backend/dist/public
-npm start         # Sirve la API y el sitio en http://localhost:3000
-```
+El código nunca se despliega precompilado: Render clona el repo y construye el frontend
+en cada despliegue. Las carpetas `dist/` y `node_modules/` están en `.gitignore`.
 
-### En Render
+### Configuración en Render
 
 | Campo | Valor |
 |---|---|
@@ -105,12 +107,26 @@ npm start         # Sirve la API y el sitio en http://localhost:3000
 | Build Command | `npm install && npm run build` |
 | Start Command | `npm start` |
 
-**Variables de entorno:**
+El `npm run build` compila Angular y copia el sitio a `backend/dist/public`, que es
+la carpeta que el servidor lee.
+
+### Variables de entorno
 
 | Variable | Valor | Para qué |
 |---|---|---|
 | `PORT` | lo asigna Render | Puerto de escucha |
 | `STATIC_DIR` | *(opcional)* | Ruta alterna del build del frontend |
+
+### Limitaciones del plan Free
+
+Dos cosas a tener en cuenta mientras el servicio esté en el plan gratuito:
+
+- **Arranque en frío:** el servicio se apaga tras 15 minutos sin tráfico. La primera
+  visita después de eso tarda unos 50 segundos en despertarlo.
+- **Disco efímero:** los cambios en archivos se pierden al redesplegar. Los 18,000+
+  códigos no se pierden (vienen del repo y solo se leen), pero **las sugerencias
+  enviadas por los usuarios sí se borran**. Para conservarlas hace falta un disco
+  persistente (de pago) o una base de datos externa.
 
 ### Endpoints
 

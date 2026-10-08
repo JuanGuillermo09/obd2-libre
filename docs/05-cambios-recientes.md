@@ -33,9 +33,13 @@
 
 ## Despliegue en Render
 
-- Se creó `frontend/public/_redirects` con `/* /index.html 200` para que las rutas de Angular funcionen correctamente en Render.
-- Backend como Web Service: Root Directory `backend`, Start Command `node api/server.js`.
-- Frontend como Static Site: Build Command `npm install && npm run build -- --configuration production`, Publish Directory `dist/mecaopen/browser`.
+- El proyecto se despliega en Render como **un solo Web Service** (`obd2-libre`), no como dos servicios.
+- Configuración: Root Directory `backend`, Build Command `npm install && npm run build`, Start Command `npm start`.
+- El backend sirve tanto la API como el sitio compilado, de modo que todo queda bajo el mismo dominio.
+- El build compila Angular y copia el resultado a `backend/dist/public`, que es la carpeta que el servidor lee.
+- Las rutas del sitio usan un fallback a `index.html` para el enrutado de Angular, sin capturar `/api/*`.
+- Se mantiene `frontend/public/_redirects` por si en algún momento se separa el frontend del backend.
+- Limitaciones conocidas del plan gratuito: arranque en frío tras 15 minutos sin tráfico, y pérdida de las sugerencias enviadas por los usuarios al redesplegar (los códigos no, porque solo se leen).
 
 ## Fix de watermark
 
