@@ -2,10 +2,35 @@
 
 > Documento que resume las nuevas funcionalidades y correcciones agregadas al proyecto.
 
-## Integración de Google Custom Search
+## Reestructuración del backend
 
-- Se añadió Google Custom Search API para mostrar resultados de la web directamente en la ficha de cada código (`codigo.html`).
-- Se mostró un botón "Buscar en Google" que ahora es reemplazado por la integración en la misma página.
+- El servidor Express se reorganizó en capas: `routes/`, `controllers/`, `services/`, `db/` y `middleware/`.
+- `server.js` pasó de ~390 líneas a menos de 70: solo configura middlewares, monta rutas y arranca el proceso.
+- Cada módulo se puede extender de forma aislada sin tocar el resto.
+- Se centralizó el acceso a datos en `db/database.js`, que expone `query`, `run` y `save`.
+- Se añadió middleware de errores para que ningún fallo sin manejar detenga el servidor.
+- Se verificó que los 8 endpoints mantienen el mismo comportamiento y las mismas respuestas que antes.
+- Sin cambios en el frontend ni en el contrato de la API.
+
+## Integración de Wikipedia API
+
+- Se reemplazó la integración de Google Custom Search API por Wikipedia API.
+- La búsqueda se hace automáticamente al abrir la ficha de cada código.
+- Los resultados aparecen **inline en la misma página**, sin abrir pestañas nuevas.
+- **Sin API keys, sin Google Cloud, sin facturación.**
+- Búsqueda con fallback: primero intenta con el código + nombre técnico, y si no hay resultados, busca solo "OBD2".
+- Sección renombrada a "Más información en Wikipedia".
+
+## Despliegue en Render
+
+- Se creó `frontend/public/_redirects` con `/* /index.html 200` para que las rutas de Angular funcionen correctamente en Render.
+- Backend como Web Service: Root Directory `backend`, Start Command `node api/server.js`.
+- Frontend como Static Site: Build Command `npm install && npm run build -- --configuration production`, Publish Directory `dist/mecaopen/browser`.
+
+## Fix de watermark
+
+- El watermark "OBD2 Libre" se superponía con el contenido de las páginas.
+- Se añadió `relative z-10` al `<main>` en `app.html` para que el contenido esté por encima del watermark.
 
 ## Login de administrador
 

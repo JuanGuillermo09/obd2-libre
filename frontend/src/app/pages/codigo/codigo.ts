@@ -27,11 +27,11 @@ export class CodigoComponent implements OnInit {
   /** Mensaje de error si el código no se encuentra */
   error = '';
 
-  /** Resultados de Google para este código */
-  googleResults: any[] = [];
+  /** Resultados de búsqueda en Wikipedia para este código */
+  wikiResults: any[] = [];
 
-  /** Indica si se están cargando los resultados de Google */
-  googleCargando = false;
+  /** Indica si se están cargando los resultados de Wikipedia */
+  wikiCargando = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -56,8 +56,8 @@ export class CodigoComponent implements OnInit {
         this.ficha = data;
         this.cargando = false;
         this.cdr.detectChanges();
-        // Buscar en Google después de tener la ficha
-        this.buscarGoogle(data.codigo, data.nombre_es || data.nombre_tecnico);
+        // Buscar información en la web después de tener la ficha
+        this.buscarEnWeb(data.codigo, data.nombre_es || data.nombre_tecnico);
       },
       error: (err) => {
         this.error = err.error?.mensaje || 'No se encontró este código';
@@ -67,17 +67,37 @@ export class CodigoComponent implements OnInit {
     });
   }
 
-  /** Busca resultados en Google para este código */
-  buscarGoogle(codigo: string, nombre: string) {
-    this.googleCargando = true;
-    this.api.buscarEnGoogle(codigo, nombre).subscribe({
+  /** Busca información en Wikipedia para este código */
+  buscarEnWeb(codigo: string, nombre: string) {
+    this.wikiCargando = true;
+    const query = `${codigo} ${nombre} OBD2`;
+    this.api.buscarWikipedia(query).subscribe({
       next: (data) => {
-        this.googleResults = data.items || [];
-        this.googleCargando = false;
+        const resultados = data.query?.search || [];
+        if (resultados.length === 0) {
+          // Fallback: buscar solo "OBD2" si no hay resultados específicos
+          this.api.buscarWikipedia('OBD2').subscribe({
+            next: (fallback) => {
+              this.wikiResults = fallback.query?.search || [];
+              this.wikiCargando = false;
+              this.cdr.detectChanges();
+            },
+            error: () => {
+              this.wikiResults = [];
+              this.wikiCargando = false;
+              this.cdr.detectChanges();
+            }
+          });
+        } else {
+          this.wikiResults = resultados;
+          this.wikiCargando = false;
+          this.cdr.detectChanges();
+        }
       },
       error: () => {
-        this.googleResults = [];
-        this.googleCargando = false;
+        this.wikiResults = [];
+        this.wikiCargando = false;
+        this.cdr.detectChanges();
       }
     });
   }

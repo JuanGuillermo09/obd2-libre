@@ -84,16 +84,6 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}/sugerencias`, data);
   }
 
-  /** Busca resultados en Google para un código DTC */
-  buscarEnGoogle(codigo: string, nombre: string): Observable<any> {
-    const apiKey = 'AIzaSyBVsE4IUwsCU71gpttEBNP14agb4YLwwo0';
-    const cx = 'd5746886183514774';
-    const query = encodeURIComponent(`${codigo} ${nombre}`);
-    return this.http.get<any>(
-      `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${query}`
-    );
-  }
-
   /** Obtiene todas las sugerencias enviadas por la comunidad */
   getSugerencias(estado?: string): Observable<any[]> {
     let url = `${this.apiUrl}/sugerencias`;
@@ -106,5 +96,16 @@ export class ApiService {
   /** Actualiza una sugerencia (estado y/o respuesta) */
   actualizarSugerencia(id: number, data: { estado?: string; respuesta?: string }): Observable<any> {
     return this.http.put(`${this.apiUrl}/sugerencias/${id}`, data);
+  }
+
+  /** Busca información en Wikipedia (sin API key, desde el navegador) */
+  buscarWikipedia(query: string): Observable<any> {
+    const url = `https://es.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*&srlimit=5`;
+    return this.http.get<any>(url);
+  }
+
+  /** Busca información en la web (desde el backend, sin API key) */
+  buscarWeb(query: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/buscar-web?q=${encodeURIComponent(query)}`);
   }
 }

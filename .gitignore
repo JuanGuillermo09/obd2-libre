@@ -3,7 +3,8 @@ node_modules/
 
 # Build
 dist/
-/.angular/cache
+.angular/
+*.tsbuildinfo
 
 # Entorno
 .env

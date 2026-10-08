@@ -15,7 +15,13 @@ Quiero que cualquiera pueda entrar desde el celular, escribir el código y leer 
 ```
 MecaOpen/
 ├── backend/              # API Node.js + datos
-│   ├── api/              # Servidor Express
+│   ├── api/              # Servidor Express (arquitectura modular)
+│   │   ├── server.js     # Punto de entrada
+│   │   ├── routes/       # Endpoints agrupados por módulo
+│   │   ├── controllers/  # Traducen HTTP a llamadas de servicio
+│   │   ├── services/     # Lógica de negocio
+│   │   ├── db/           # Acceso a datos (sql.js)
+│   │   └── middleware/   # Manejo de errores
 │   ├── scripts/          # Importación y validación
 │   ├── data/             # Base de datos y datos fuente
 │   │   ├── source-data/  # Archivos originales (solo lectura)
@@ -69,15 +75,52 @@ node start.js
 - Pasos para revisar, en orden.
 - Qué tan grave es y si se puede seguir manejando.
 - Si la ficha ya la revisó un mecánico o todavía es borrador.
-- Resultados de Google en la misma página.
+- Resultados de Wikipedia en la misma página (búsqueda automática al abrir la ficha).
 
 ## Con qué lo estoy construyendo
 
 - **Frontend:** Angular 22, con renderizado en servidor para que las páginas salgan en Google.
-- **Backend:** Node.js + Express.
+- **Backend:** Node.js + Express, con arquitectura modular por capas.
 - **Base de datos:** SQLite (via sql.js).
 - **Estilos:** Tailwind CSS v4, pensando primero en pantallas de celular.
-- **Búsqueda en la web:** Google Custom Search API integrada en la ficha de cada código.
+- **Búsqueda en la web:** Wikipedia API integrada en la ficha de cada código (sin API key, con fallback a búsqueda genérica).
+
+## Arquitectura del backend
+
+El backend sigue una separación de responsabilidades en capas. Cada capa hace una sola cosa:
+
+```
+Petición HTTP
+    ↓
+routes/       → define qué URL responde a qué método (GET, POST...)
+    ↓
+controllers/  → validan la entrada y arman la respuesta HTTP
+    ↓
+services/     → contienen la lógica de negocio
+    ↓
+db/           → ejecuta las consultas y guarda los cambios
+```
+
+**Agregar un endpoint nuevo** es un proceso de cuatro pasos:
+
+1. Escribir la función en `services/` con la lógica.
+2. Exponerla en `controllers/` como un manejador de `req` y `res`.
+3. Registrar la ruta en el archivo de `routes/` correspondiente.
+4. Si es un módulo nuevo, montar su router en `routes/index.js`.
+
+El servidor se mantiene corto: `server.js` solo configura middlewares, monta las rutas y arranca el proceso.
+
+**Manejo de errores:** los controladores capturan los errores de los servicios y los traducen a respuestas con código HTTP (400, 404, 500). Lo que no se capture pasa a `middleware/errorHandler.js`, que evita que el proceso se caiga.
+
+**Archivos actuales:**
+
+| Capa | Archivos |
+|---|---|
+| `routes/` | `codigos.js`, `buscar.js`, `metadatos.js`, `sugerencias.js`, `web.js`, `index.js` |
+| `controllers/` | `codigosController.js`, `sugerenciasController.js`, `webController.js` |
+| `services/` | `codigosService.js`, `sugerenciasService.js`, `webService.js` |
+| `db/` | `database.js` |
+| `middleware/` | `errorHandler.js` |
 
 ## Cómo ayudar
 
@@ -105,10 +148,13 @@ Licencia del código y del contenido: *por definir*. Voy a decidirla antes de pu
 
 ## Últimos cambios
 
-- Integración de Google Custom Search API en cada ficha.
+- Backend reestructurado en capas (`routes/`, `controllers/`, `services/`, `db/`, `middleware/`).
+- Integración de Wikipedia API en cada ficha (resultados inline, sin API key).
 - Página `/sugerencias` con listado de contribuciones y paginación.
 - Login de administrador en `/sugerencias` (demo: `soporte@obd2libre.com` / `admin123`).
 - Estados de sugerencia: `pendiente`, `en_desarrollo`, `terminada`, `rechazada`.
 - Fix de renderizado: `ChangeDetectorRef` en todos los componentes HTTP.
 - Archivos de componentes separados en `.ts` + `.html` + `.css`.
 - Renombrado de archivos Angular a convención sin `.component`.
+- Fix de watermark: el contenido principal ahora tiene `z-index` superior.
+- Archivo `_redirects` para despliegue en Render (SPA routing).

@@ -10,8 +10,9 @@
     "start": "node api/server.js"
   },
   "dependencies": {
-    "sql.js": "^1.13.0",
+    "cheerio": "^1.2.0",
+    "cors": "^2.8.5",
     "express": "^4.21.2",
-    "cors": "^2.8.5"
+    "sql.js": "^1.13.0"
   }
 }

@@ -142,26 +142,25 @@
       </p>
     }
 
-    <!-- Resultados de Google -->
+    <!-- Búsqueda en Wikipedia -->
     <section class="mt-8">
-      <h2 class="text-xl font-bold mb-3">¿Qué más dice Google?</h2>
+      <h2 class="text-xl font-bold mb-3">Más información en Wikipedia</h2>
       <div class="bg-white border border-gray-200 rounded-lg p-4">
-        @if (googleCargando) {
-          <p class="text-gray-600">Buscando en Google...</p>
-        } @else if (googleResults.length > 0) {
+        @if (wikiCargando) {
+          <p class="text-gray-600">Buscando en Wikipedia...</p>
+        } @else if (wikiResults.length > 0) {
           <div class="space-y-4">
-            @for (item of googleResults; track item.link) {
+            @for (item of wikiResults; track item.pageid) {
               <div>
-                <a [href]="item.link" target="_blank" rel="noopener" class="text-primary hover:underline font-semibold">
+                <a [href]="'https://es.wikipedia.org/wiki/' + item.title" target="_blank" rel="noopener" class="text-primary hover:underline font-semibold">
                   {{ item.title }}
                 </a>
-                <p class="text-sm text-gray-600 mt-1">{{ item.snippet }}</p>
-                <p class="text-xs text-green-700">{{ item.displayLink }}</p>
+                <p class="text-sm text-gray-600 mt-1" [innerHTML]="item.snippet"></p>
               </div>
             }
           </div>
         } @else {
-          <p class="text-gray-600">No se encontraron resultados en Google para este código.</p>
+          <p class="text-gray-600">No se encontraron artículos en Wikipedia para este código.</p>
         }
       </div>
     </section>
