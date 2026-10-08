@@ -85,6 +85,40 @@ node start.js
 - **Estilos:** Tailwind CSS v4, pensando primero en pantallas de celular.
 - **Búsqueda en la web:** Wikipedia API integrada en la ficha de cada código (sin API key, con fallback a búsqueda genérica).
 
+## Despliegue
+
+El backend también sirve el sitio, así que en producción corre **un solo servicio**.
+
+### Build
+
+```bash
+cd backend
+npm run build     # Compila Angular y copia el sitio a backend/dist/public
+npm start         # Sirve la API y el sitio en http://localhost:3000
+```
+
+### En Render
+
+| Campo | Valor |
+|---|---|
+| Root Directory | `backend` |
+| Build Command | `npm install && npm run build` |
+| Start Command | `npm start` |
+
+**Variables de entorno:**
+
+| Variable | Valor | Para qué |
+|---|---|---|
+| `PORT` | lo asigna Render | Puerto de escucha |
+| `STATIC_DIR` | *(opcional)* | Ruta alterna del build del frontend |
+
+### Endpoints
+
+- `/api/*` → API REST
+- `/` y cualquier otra ruta → el sitio (Angular enruta en el cliente)
+
+Las URLs de la API son relativas en producción, así que el mismo dominio sirve todo.
+
 ## Arquitectura del backend
 
 El backend sigue una separación de responsabilidades en capas. Cada capa hace una sola cosa:

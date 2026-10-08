@@ -2,6 +2,16 @@
 
 > Documento que resume las nuevas funcionalidades y correcciones agregadas al proyecto.
 
+## Servidor único (API + sitio)
+
+- El backend ahora sirve también los archivos estáticos del frontend, para desplegar todo en un solo servicio de Render.
+- Se agregó el script `npm run build` en el backend: compila Angular y copia el resultado a `backend/dist/public`.
+- Las rutas del sitio usan un fallback a `index.html` para que Angular enrute en el cliente, sin capturar las rutas `/api/*`.
+- La información de la API se movió de `/` a `/api` para no tapar la raíz del sitio.
+- En el frontend la URL de la API ahora es relativa en producción, por lo que funciona en cualquier dominio y puerto.
+- En desarrollo sigue apuntando a `localhost:3000` cuando corre en el puerto 4200.
+- `index.html` se sirve sin caché para que los deploys se vean al instante; los assets con hash se cachean un año.
+
 ## Reestructuración del backend
 
 - El servidor Express se reorganizó en capas: `routes/`, `controllers/`, `services/`, `db/` y `middleware/`.

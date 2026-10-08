@@ -49,7 +49,23 @@ export interface BusquedaResultado {
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = 'http://localhost:3000/api';
+  /**
+   * URL base de la API.
+   *
+   * En desarrollo (ng serve en el puerto 4200) apunta al backend local.
+   * En producción usa una ruta relativa, porque el mismo servidor sirve
+   * la API y el sitio: así funciona sin importar el dominio ni el puerto.
+   */
+  private apiUrl = this.resolveApiUrl();
+
+  private resolveApiUrl(): string {
+    // Puerto 4200 = servidor de desarrollo de Angular, la API está aparte
+    if (typeof window !== 'undefined' && window.location.port === '4200') {
+      return 'http://localhost:3000/api';
+    }
+    // Cualquier otro caso (producción, mismo origen): ruta relativa
+    return '/api';
+  }
 
   constructor(private http: HttpClient) {}
 
